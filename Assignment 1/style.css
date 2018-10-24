@@ -1,5 +1,7 @@
-path{
-    stroke: blue;
-    stroke-width:2px;
-    fill:none;
+html,body{
+    margin: 0;
+    height: 100%;
+}
+g.axis_y {
+    stroke: red;
 }
