@@ -24,19 +24,21 @@ d3.json("https://data.nasa.gov/resource/nkd9-uwas.json").get(function(error,data
      
     }
    
-    var max = d3.max(e, function(d){return d;});
+    var max = d3.max(e);
       
     
      var y = d3.scaleLinear()
-    .domain([0,max])
+    .domain([-5,1])
     .range([height,0]);
       
     var yAxis = d3.axisLeft(y);
         var line = d3.line()
-                    .x(function(d){return y((d.e));})
+                    .x(function(d,i){return i*5;})
                     .y(function(d){return y((d.e));});
                
        chartGroup.append("path").attr("d",line(data));
-    
+        chartGroup.append("g")
+        .attr("class","axis y")   
+        .call(yAxis);
   
 });
