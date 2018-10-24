@@ -1,0 +1,1 @@
+Opdracht 1: Ik heb gegevens van de nasa opgehaald in een json formaat en uitgelezen naar een lijngrafiek. De gegevens die worden gebruiken zijn de cometen en hun afstand. 
