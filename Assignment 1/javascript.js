@@ -1,7 +1,7 @@
 //Size of window
 var height = 960;
 var width = 500;
- 
+
 // e array & name array
 var e = [];
 var comets = [];
@@ -24,7 +24,7 @@ d3.json("https://data.nasa.gov/resource/nkd9-uwas.json").get(function(error,data
           e.push(root.data.e);
         comets.push(root.data.object_name);   
         
-       
+        
      
     }
    
@@ -33,7 +33,7 @@ d3.json("https://data.nasa.gov/resource/nkd9-uwas.json").get(function(error,data
     var x = d3.scaleBand()
     .domain(comets)
     .paddingInner(1)
-    .range([0,width*3]);
+    .range([0,width*2.5]);
     
      var y = d3.scaleLinear()
     .domain([0.3,1])
@@ -43,7 +43,7 @@ d3.json("https://data.nasa.gov/resource/nkd9-uwas.json").get(function(error,data
     var yAxis = d3.axisLeft(y);
     
         var line = d3.line()                     
-                    .x(function(d,i){return i*9;})
+                    .x(function(d,i){return i*8;})
                     .y(function(d){return y((d.e));})
                     .curve(d3.curveCardinal);
                
