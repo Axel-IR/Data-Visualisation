@@ -1,8 +1,8 @@
 /*http://bl.ocks.org/d3noob/a22c42db65eb00d4e369*/
 /*https://github.com/d3/d3/blob/master/CHANGES.md*/
 /*https://github.com/d3/d3/blob/master/API.md#easings-d3-ease*/
-var height = 200;
-    var width = 500;
+var height = 400;
+    var width = 1450;
    
 var parseDataYear = d3.timeParse("%Y");
 
@@ -37,15 +37,15 @@ d3.json("data/data.json").get(function(error,data){
      .range([0,width]);
     
     var y = d3.scaleLinear()
-    .domain(d3.extent(values,function(d){return d-10;}))
-    .range([height,0]);
+    .domain(d3.extent(values,function(d){return d+10;}))
+    .range([height-20,0]);
    
     var xAxis = d3.axisBottom(x);
     var yAxis = d3.axisLeft(y);
     
   
      var line = d3.line()                     
-                    .x(function(d,i){return i*84;})
+                    .x(function(d,i){return i*240;})
                     .y(function(d){return y(d);})
                     .curve(d3.curveNatural);
                
@@ -81,18 +81,18 @@ d3.json("data/data.json").get(function(error,data){
             
            
         chartGroup.append("g")
-        .attr("class","axis y")   
+        .attr("class","axis y")       
         .call(yAxis);
     
         chartGroup.append("g")
         .attr("transform","translate(0,"+height+")")
-        .attr("class","x axis hidden")
+        .attr("class","axis x hidden")        
         .call(xAxis);
          
     chartGroup.selectAll("circle").data(Year).enter()       
        .append("circle")      
         .attr("class", "dot")   
-        .attr("cx",function(d,i){return i*84;} )
+        .attr("cx",function(d,i){return i*240;} )
         .attr("cy",function(d,i){ return y(values[i]);})
         .attr("r", function(d,i) { return 5; })   
         .on("mouseover",function(d,i){       

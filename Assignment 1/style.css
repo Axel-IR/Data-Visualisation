@@ -3,8 +3,9 @@ html,body{
     height: 94.5%;
 }
 
+
 g.axis.y:hover {
-    stroke: red;
+    stroke: red;    
 }
 
 g.axis.x:hover{
@@ -12,7 +13,7 @@ g.axis.x:hover{
 }
 svg{
     background-color: black;
-    margin: 0 auto;
+    margin: 0 auto;     
 }
 #bg h1{
     display: block;
