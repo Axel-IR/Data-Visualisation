@@ -60,7 +60,7 @@ d3.json("data/data.json").get(function (error, data) {
     var totalLength = path.node().getTotalLength();
     //path animation repeat
     path.transition().duration(700).on("start", function repeat() {
-        d3.active(this).attr("stroke-dashoffset", 0).ease(d3.easeLinear).style("stroke", "green").transition().attr("stroke-dasharray", totalLength + " " + totalLength).attr("stroke-dashoffset", totalLength).style("stroke", "white").transition().on("start", repeat);
+        d3.active(this).attr("stroke-dashoffset", 0).ease(d3.easeExpOut).style("stroke", "green").transition().attr("stroke-dasharray", totalLength + " " + totalLength).attr("stroke-dashoffset", totalLength).style("stroke", "white").transition().on("start", repeat);
     });
     //add values to on y axis & g element
     chartGroup.append("g").attr("transform", "translate(" + -50 + ",0)").attr("class", "axis y").call(yAxis);
