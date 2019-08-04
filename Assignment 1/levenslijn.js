@@ -5,7 +5,7 @@
 var height = window.innerHeight - 200;
 var width = window.innerWidth / 2.5;
 //String to date value (year)
-var parseDataYear = d3.timeParse("%Y");
+var parseDatayear = d3.timeParse("%Y");
 // declare a tree layout
 var tree = d3.tree().size([width, height]);
 d3.json("data/data.json").get(function (error, data) {
@@ -25,71 +25,87 @@ d3.json("data/data.json").get(function (error, data) {
     // declare chartGroup & append group element to svg
     var chartGroup = svg.append('g').attr("transform", "translate(" + margin.left + "," + margin.top + ")");
     //declare year & values array
-    var Year = [];
-    var values = [];
+    var year = {};
+    var values = {};
     //add values from json file to the Arrays
-    for (x in data["Vlaams-brabant"]) {
-        values.push(data["Vlaams-brabant"][x]);
+    for (city in data) {
+        values[city] = [];
+        year[city] = [];
+        for (x in data[city]) {
+            values[city].push(data[city][x]);
+        }
+        for (x in data[city]) {
+            year[city].push(x);
+        }
     }
-    for (x in data["Vlaams-brabant"]) {
-        Year.push(x);
+    for (city in data) {
+        //Scale year values  
+        var x = scaleX(city, year);
+        //Scale values
+        var y = scaleY(city, values);
+        //append data to x axis & y axis
+        var xAxis = d3.axisBottom(x);
+        var yAxis = d3.axisLeft(y);
+        //declare line chart
+        var line = d3.line().x(function (d, i) {
+            return i * width / 3;
+        }).y(function (d) {
+            return y(d);
+        });
+        //declare path & to chartGroup element
+        var path = chartGroup.append("path").attr("stroke", "green").attr("stroke-width", "3").attr("fill", "none").attr("d", line(values[city])).on("mouseover", function () {
+            $(".dot").css("fill", "green");
+        });
+        //when hovering, it appears white
+        //length of path
+        var totalLength = path.node().getTotalLength();
+        //path animation repeat
+        path.transition().duration(700).on("start", function repeat() {
+            d3.active(this).attr("stroke-dashoffset", 0).ease(d3.easeExpOut).style("stroke", "green").transition().attr("stroke-dasharray", totalLength + " " + totalLength).attr("stroke-dashoffset", totalLength).style("stroke", "white").transition().on("start", repeat);
+        });
+        //add values to on y axis & g element
+        chartGroup.append("g").attr("transform", "translate(" + -50 + ",0)").attr("class", "axis y").call(yAxis);
+        //add year values to g element & x axis
+        chartGroup.append("g").attr("transform", "translate(0," + (height + 20) + ")").attr("class", "axis x hidden").call(xAxis);
+        //select all points equal to year values 
+        chartGroup.selectAll("circle").data(year[city]).enter().append("circle").attr("class", "dot").attr("cx", function (d, i) {
+            return i * width / 3;
+        }).attr("cy", function (d, i) {
+            for (city in data) {
+                return y(values[city][i]);
+            }
+        }).attr("r", function (d, i) {
+            if (i == 0 || i == 6) {
+                return 15;
+            }
+            else {
+                return 0;
+            }
+        }).on("mouseover", function (d, i) { //appear when hovering on path
+            $("g.axis.x").show();
+            $("g.axis.x").css("stroke", "white");
+            console.log("hit");
+            $("g.axis.y").show();
+            $("g.axis.y").css("stroke", "white");
+            div.transition() //animation tooltip
+                .duration(200).style("opacity", .9);
+            div.html(values[city][i] + "<br/>" + year[city][i]).style("left", (d3.event.pageX) + "px").style("top", (d3.event.pageY - 50) + "px");
+        }).on("mouseout", function () { //disappear when mouse is not nearby
+            $("g.axis.x").hide();
+            $("g.axis.y").hide();
+            div.transition().duration(500).style("opacity", 0);
+        }).style("fill", "green");
     }
-    //Scale year values  
-    var x = d3.scaleTime().domain(d3.extent(Year, function (d) {
-        return parseDataYear(d);
-    })).range([0, width * 2]);
-    //Scale values
-    var y = d3.scaleLinear().domain(d3.extent(values, function (d) {
+});
+
+function scaleX(city, year) {
+    return (d3.scaleTime().domain(d3.extent(year[city], function (d) {
+        return parseDatayear(d);
+    }))).range([0, width * 2]);
+}
+
+function scaleY(city, values) {
+    return d3.scaleLinear().domain(d3.extent(values[city], function (d) {
         return d + 10;
     })).range([height - 20, 0]);
-    //append data to x axis & y axis
-    var xAxis = d3.axisBottom(x);
-    var yAxis = d3.axisLeft(y);
-    //declare line chart
-    var line = d3.line().x(function (d, i) {
-        console.log(width);
-        return i * width / 3;
-    }).y(function (d) {
-        return y(d);
-    });
-    //declare path & to chartGroup element
-    var path = chartGroup.append("path").attr("stroke", "green").attr("stroke-width", "3").attr("fill", "none").attr("d", line(values)).on("mouseover", function () {
-        $(".dot").css("fill", "green");
-    }); //when hovering, it appears white
-    //length of path
-    var totalLength = path.node().getTotalLength();
-    //path animation repeat
-    path.transition().duration(700).on("start", function repeat() {
-        d3.active(this).attr("stroke-dashoffset", 0).ease(d3.easeExpOut).style("stroke", "green").transition().attr("stroke-dasharray", totalLength + " " + totalLength).attr("stroke-dashoffset", totalLength).style("stroke", "white").transition().on("start", repeat);
-    });
-    //add values to on y axis & g element
-    chartGroup.append("g").attr("transform", "translate(" + -50 + ",0)").attr("class", "axis y").call(yAxis);
-    //add year values to g element & x axis
-    chartGroup.append("g").attr("transform", "translate(0," + (height + 20) + ")").attr("class", "axis x hidden").call(xAxis);
-    //select all points equal to year values 
-    chartGroup.selectAll("circle").data(Year).enter().append("circle").attr("class", "dot").attr("cx", function (d, i) {
-        return i * width / 3;
-    }).attr("cy", function (d, i) {
-        return y(values[i]);
-    }).attr("r", function (d, i) {
-        if (i == 0 || i == 6) {
-            return 15;
-        }
-        else {
-            return 0;
-        }
-    }).on("mouseover", function (d, i) { //appear when hovering on path
-        $("g.axis.x").show();
-        $("g.axis.x").css("stroke", "white");
-        console.log("hit");
-        $("g.axis.y").show();
-        $("g.axis.y").css("stroke", "white");
-        div.transition() //animation tooltip
-            .duration(200).style("opacity", .9);
-        div.html(values[i] + "<br/>" + Year[i]).style("left", (d3.event.pageX) + "px").style("top", (d3.event.pageY - 50) + "px");
-    }).on("mouseout", function () { //disappear when mouse is not nearby
-        $("g.axis.x").hide();
-        $("g.axis.y").hide();
-        div.transition().duration(500).style("opacity", 0);
-    }).style("fill", "green");
-});
+}
