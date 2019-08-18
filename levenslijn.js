@@ -8,7 +8,7 @@ var width = window.innerWidth / 2.8;
 var parseDatayear = d3.timeParse("%Y");
 // declare a tree layout
 var tree = d3.tree().size([width, height]);
-d3.json("data/data.json").get(function (error, data) {
+d3.json("../data/data.json").get(function (error, data) {
     var margin = {
         left: 200,
         right: 100,
@@ -106,8 +106,8 @@ d3.json("data/data.json").get(function (error, data) {
             } else {
                 return 0;
             }
-        }).on("mouseover", function (d, i) {//appear when hovering on path
-           
+        }).on("mouseover", function (d, i) { //appear when hovering on path
+
             $("g.axis.x").show();
             $("g.axis.x").css("stroke", "white");
             console.log("hit");
@@ -115,7 +115,7 @@ d3.json("data/data.json").get(function (error, data) {
             $("g.axis.y").css("stroke", "white");
             div.transition() //animation tooltip
                 .duration(200).style("opacity", .9);
-            div.html(values[this.id][i] + "<br/>" + year[i]).style("left", (d3.event.pageX) + "px").style("top", (d3.event.pageY - 50) + "px");
+            div.html(this.id + "<br/>" + values[this.id][i] + "<br/>" + year[i]).style("left", (d3.event.pageX - 100) + "px").style("top", (d3.event.pageY) + "px");
         }).on("mouseout", function () { //disappear when mouse is not nearby
             $("g.axis.x").hide();
             $("g.axis.y").hide();
